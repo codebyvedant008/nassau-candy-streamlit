@@ -104,9 +104,9 @@ https://github.com/codebyvedant008/nassau-candy-streamlit
 
 ---
 
-## 📄 Research Paper
+## 📄 Research Paper URL
 
-(Add your Google Drive / PDF link here)
+(https://drive.google.com/file/d/1_0YIeYSgzncOJQ0AcfvLbW9dWs-L3NpQ/view?usp=drive_link)
 
 ---
 
