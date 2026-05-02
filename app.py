@@ -1,34 +1,39 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
-# Page setup
+# =========================
+# PAGE CONFIG
+# =========================
 st.set_page_config(
     page_title="Nassau Candy Optimizer",
     page_icon="🏭",
     layout="wide"
 )
 
-# Load Data
+# =========================
+# LOAD DATA
+# =========================
 df = pd.read_csv("Nassau Candy Distributor.csv")
 
-# Dates
+# Convert Dates
 df["Order Date"] = pd.to_datetime(df["Order Date"], errors="coerce")
 df["Ship Date"] = pd.to_datetime(df["Ship Date"], errors="coerce")
 
-# Lead Time
+# Create Lead Time
 df["Lead_Time"] = (df["Ship Date"] - df["Order Date"]).dt.days
 df = df[df["Lead_Time"] >= 0]
 
-# =======================
+# =========================
 # HEADER
-# =======================
+# =========================
 st.title("🏭 Nassau Candy Factory Optimization Dashboard")
-st.markdown("### AI-Powered Shipping & Factory Recommendation System")
+st.caption("AI-powered factory reallocation & shipping optimization system")
 
-# =======================
-# SIDEBAR
-# =======================
+st.markdown("---")
+
+# =========================
+# SIDEBAR FILTERS
+# =========================
 st.sidebar.header("🔍 Filters")
 
 region = st.sidebar.selectbox(
@@ -41,12 +46,12 @@ product = st.sidebar.selectbox(
     ["All"] + list(df["Product Name"].dropna().unique())
 )
 
-shipmode = st.sidebar.selectbox(
+ship_mode = st.sidebar.selectbox(
     "Select Ship Mode",
     ["All"] + list(df["Ship Mode"].dropna().unique())
 )
 
-# Apply filters
+# Apply Filters
 filtered = df.copy()
 
 if region != "All":
@@ -55,40 +60,40 @@ if region != "All":
 if product != "All":
     filtered = filtered[filtered["Product Name"] == product]
 
-if shipmode != "All":
-    filtered = filtered[filtered["Ship Mode"] == shipmode]
+if ship_mode != "All":
+    filtered = filtered[filtered["Ship Mode"] == ship_mode]
 
-# =======================
+# =========================
 # KPI CARDS
-# =======================
+# =========================
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Total Orders", len(filtered))
-col2.metric("Avg Lead Time", round(filtered["Lead_Time"].mean(), 1))
-col3.metric("Total Sales", f"${filtered['Sales'].sum():,.0f}")
-col4.metric("Total Profit", f"${filtered['Gross Profit'].sum():,.0f}")
+col1.metric("📦 Orders", len(filtered))
+col2.metric("⏱ Avg Lead Time", round(filtered["Lead_Time"].mean(), 1))
+col3.metric("💰 Total Sales", f"${filtered['Sales'].sum():,.0f}")
+col4.metric("📈 Total Profit", f"${filtered['Gross Profit'].sum():,.0f}")
 
 st.markdown("---")
 
-# =======================
-# CHARTS
-# =======================
+# =========================
+# CHARTS ROW 1
+# =========================
 col5, col6 = st.columns(2)
 
 with col5:
-    st.subheader("📈 Lead Time by Region")
-    region_chart = filtered.groupby("Region")["Lead_Time"].mean()
-    st.bar_chart(region_chart)
+    st.subheader("📍 Lead Time by Region")
+    chart1 = filtered.groupby("Region")["Lead_Time"].mean()
+    st.bar_chart(chart1)
 
 with col6:
-    st.subheader("💰 Sales by Ship Mode")
-    sales_chart = filtered.groupby("Ship Mode")["Sales"].sum()
-    st.bar_chart(sales_chart)
+    st.subheader("🚚 Sales by Ship Mode")
+    chart2 = filtered.groupby("Ship Mode")["Sales"].sum()
+    st.bar_chart(chart2)
 
-# =======================
-# PRODUCT ANALYSIS
-# =======================
-st.subheader("🍫 Top Products by Sales")
+# =========================
+# TOP PRODUCTS
+# =========================
+st.subheader("🍫 Top 10 Products by Sales")
 
 top_products = (
     filtered.groupby("Product Name")["Sales"]
@@ -99,10 +104,10 @@ top_products = (
 
 st.bar_chart(top_products)
 
-# =======================
+# =========================
 # RECOMMENDATION ENGINE
-# =======================
-st.subheader("🤖 Recommendation Insights")
+# =========================
+st.subheader("🤖 Smart Recommendation")
 
 slow_region = (
     filtered.groupby("Region")["Lead_Time"]
@@ -120,18 +125,18 @@ top_product = (
 
 st.success(
     f"⚡ {slow_region} region has the highest lead time. "
-    f"Consider reallocating high-demand product '{top_product}' "
-    f"to a nearer factory for faster delivery."
+    f"Recommend reallocating '{top_product}' to a nearer factory "
+    f"to improve shipping speed and efficiency."
 )
 
-# =======================
+# =========================
 # DATA TABLE
-# =======================
-st.subheader("📄 Raw Data Preview")
+# =========================
+st.subheader("📄 Data Preview")
 st.dataframe(filtered.head(20))
 
-# =======================
+# =========================
 # FOOTER
-# =======================
+# =========================
 st.markdown("---")
-st.caption("Built by Vedant | Data Analyst Internship Project 🚀")
+st.caption("Built by Vedant Vinay Pal | Data Analyst Internship Project 🚀")
