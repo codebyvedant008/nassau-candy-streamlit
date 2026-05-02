@@ -256,7 +256,7 @@ Factory Reallocation & Shipping Optimization Recommendation System developed for
 https://github.com/codebyvedant008/nassau-candy-streamlit
 
 ### 📄 Research Paper PDF  
-PASTE_YOUR_GOOGLE_DRIVE_LINK_HERE
+https://drive.google.com/file/d/1_0YIeYSgzncOJQ0AcfvLbW9dWs-L3NpQ/view?usp=drive_link
 
 ### 🌐 Live Streamlit Dashboard  
 https://ann8rthzc5gfnvps6w8avu.streamlit.app/
