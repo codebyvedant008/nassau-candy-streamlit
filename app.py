@@ -26,8 +26,8 @@ df = df[df["Lead_Time"] >= 0]
 # =========================
 # HEADER
 # =========================
-st.title("🏭 Nassau Candy Factory Optimization Dashboard")
-st.caption("AI-powered factory reallocation & shipping optimization system")
+st.title("🏭 Nassau Candy Optimization Dashboard")
+st.caption("AI-powered factory allocation & shipping intelligence")
 
 st.markdown("---")
 
@@ -66,12 +66,11 @@ if ship_mode != "All":
 # =========================
 # KPI CARDS
 # =========================
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric("📦 Orders", len(filtered))
-col2.metric("⏱ Avg Lead Time", round(filtered["Lead_Time"].mean(), 1))
-col3.metric("💰 Total Sales", f"${filtered['Sales'].sum():,.0f}")
-col4.metric("📈 Total Profit", f"${filtered['Gross Profit'].sum():,.0f}")
+col1,col2,col3,col4 = st.columns(4)
+col1.metric("Orders", len(df))
+col2.metric("Avg Lead Time", round(df["Lead_Time"].mean(),1))
+col3.metric("Sales", f"${df['Sales'].sum():,.0f}")
+col4.metric("Profit", f"${df['Gross Profit'].sum():,.0f}")
 
 st.markdown("---")
 
@@ -139,4 +138,4 @@ st.dataframe(filtered.head(20))
 # FOOTER
 # =========================
 st.markdown("---")
-st.caption("Built by Vedant Vinay Pal | Data Analyst Internship Project 🚀")
+st.caption("Built by Vedant | Data Analyst Internship Project")
