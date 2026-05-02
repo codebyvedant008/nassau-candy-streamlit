@@ -221,23 +221,52 @@ with tab3:
 with tab4:
 
     st.markdown("""
-### 👨‍💻 Developed By Vedant Vinay Pal
+# 👨‍💻 About Developer
 
-**Data Analyst Internship Project**
+## Vedant Vinay Pal  
+### Data Analyst Intern | AI & Business Intelligence Enthusiast
 
-### 🔗 Project Links
+---
 
-- GitHub Repository  
-- Research Paper PDF  
-- Live Streamlit App  
+## 📌 Project Overview
 
-### 🚀 Technologies Used
+Factory Reallocation & Shipping Optimization Recommendation System developed for **Nassau Candy Distributor** to improve delivery speed, reduce logistics inefficiencies, and maximize profitability using Machine Learning & Data Analytics.
 
-Python | Pandas | Streamlit | Plotly | Machine Learning
+---
+
+## 🚀 Key Features
+
+✅ Predict Shipping Lead Time  
+✅ Smart Factory Reallocation Suggestions  
+✅ Profit & Efficiency Optimization  
+✅ Interactive Visual Dashboard  
+✅ Downloadable Reports
+
+---
+
+## 🛠 Technologies Used
+
+**Python | Pandas | Streamlit | Plotly | Scikit-learn | Machine Learning**
+
+---
+
+## 🔗 Project Resources
+
+### 📂 GitHub Repository  
+https://github.com/codebyvedant008/nassau-candy-streamlit
+
+### 📄 Research Paper PDF  
+PASTE_YOUR_GOOGLE_DRIVE_LINK_HERE
+
+### 🌐 Live Streamlit Dashboard  
+https://ann8rthzc5gfnvps6w8avu.streamlit.app/
+
+---
+
+## 📈 Career Objective
+
+Passionate about solving real-world business problems through data, dashboards, and intelligent systems.
+
 """)
 
-# ==================================================
-# FOOTER
-# ==================================================
-st.markdown("---")
-st.caption("© 2026 Nassau Candy AI Optimizer | Premium Edition")
+    st.success("🚀 Thank you for visiting this premium analytics project!")
