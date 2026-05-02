@@ -1,57 +1,94 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
-# =========================
+# ==================================================
 # PAGE CONFIG
-# =========================
+# ==================================================
 st.set_page_config(
-    page_title="Nassau Candy Optimizer",
+    page_title="Nassau Candy AI Optimizer",
     page_icon="🏭",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# =========================
+# ==================================================
+# CUSTOM CSS (ULTRA PREMIUM DARK THEME)
+# ==================================================
+st.markdown("""
+<style>
+body {
+    background-color: #0e1117;
+}
+.main {
+    background-color: #0e1117;
+}
+h1, h2, h3, h4, h5 {
+    color: white;
+}
+div[data-testid="metric-container"] {
+    background: linear-gradient(135deg,#1f2937,#111827);
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid #2d3748;
+    box-shadow: 0 0 15px rgba(0,255,255,0.08);
+}
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+.stTabs [data-baseweb="tab"] {
+    background-color:#1f2937;
+    padding:10px 18px;
+    border-radius:10px;
+}
+footer {visibility:hidden;}
+</style>
+""", unsafe_allow_html=True)
+
+# ==================================================
 # LOAD DATA
-# =========================
+# ==================================================
 df = pd.read_csv("Nassau Candy Distributor.csv")
 
-# Convert Dates
+# Date conversion
 df["Order Date"] = pd.to_datetime(df["Order Date"], errors="coerce")
 df["Ship Date"] = pd.to_datetime(df["Ship Date"], errors="coerce")
 
-# Create Lead Time
+# Lead Time
 df["Lead_Time"] = (df["Ship Date"] - df["Order Date"]).dt.days
 df = df[df["Lead_Time"] >= 0]
 
-# =========================
+# ==================================================
 # HEADER
-# =========================
-st.title("🏭 Nassau Candy Optimization Dashboard")
-st.caption("AI-powered factory allocation & shipping intelligence")
+# ==================================================
+st.markdown("""
+# 🏭 Nassau Candy AI Factory Optimizer
+### Premium Logistics Intelligence Dashboard
+""")
 
 st.markdown("---")
 
-# =========================
+# ==================================================
 # SIDEBAR FILTERS
-# =========================
-st.sidebar.header("🔍 Filters")
+# ==================================================
+st.sidebar.title("⚙ Control Panel")
 
 region = st.sidebar.selectbox(
-    "Select Region",
-    ["All"] + list(df["Region"].dropna().unique())
+    "🌍 Select Region",
+    ["All"] + sorted(df["Region"].dropna().unique())
 )
 
 product = st.sidebar.selectbox(
-    "Select Product",
-    ["All"] + list(df["Product Name"].dropna().unique())
+    "🍫 Select Product",
+    ["All"] + sorted(df["Product Name"].dropna().unique())
 )
 
-ship_mode = st.sidebar.selectbox(
-    "Select Ship Mode",
-    ["All"] + list(df["Ship Mode"].dropna().unique())
+ship = st.sidebar.selectbox(
+    "🚚 Ship Mode",
+    ["All"] + sorted(df["Ship Mode"].dropna().unique())
 )
 
-# Apply Filters
+# Apply filters
 filtered = df.copy()
 
 if region != "All":
@@ -60,82 +97,147 @@ if region != "All":
 if product != "All":
     filtered = filtered[filtered["Product Name"] == product]
 
-if ship_mode != "All":
-    filtered = filtered[filtered["Ship Mode"] == ship_mode]
+if ship != "All":
+    filtered = filtered[filtered["Ship Mode"] == ship]
 
-# =========================
+# ==================================================
 # KPI CARDS
-# =========================
+# ==================================================
 col1,col2,col3,col4 = st.columns(4)
-col1.metric("Orders", len(df))
-col2.metric("Avg Lead Time", round(df["Lead_Time"].mean(),1))
-col3.metric("Sales", f"${df['Sales'].sum():,.0f}")
-col4.metric("Profit", f"${df['Gross Profit'].sum():,.0f}")
+
+col1.metric("📦 Orders", len(filtered))
+col2.metric("⏱ Avg Lead Time", round(filtered["Lead_Time"].mean(),1))
+col3.metric("💰 Sales", f"${filtered['Sales'].sum():,.0f}")
+col4.metric("📈 Profit", f"${filtered['Gross Profit'].sum():,.0f}")
 
 st.markdown("---")
 
-# =========================
-# CHARTS ROW 1
-# =========================
-col5, col6 = st.columns(2)
-
-with col5:
-    st.subheader("📍 Lead Time by Region")
-    chart1 = filtered.groupby("Region")["Lead_Time"].mean()
-    st.bar_chart(chart1)
-
-with col6:
-    st.subheader("🚚 Sales by Ship Mode")
-    chart2 = filtered.groupby("Ship Mode")["Sales"].sum()
-    st.bar_chart(chart2)
-
-# =========================
-# TOP PRODUCTS
-# =========================
-st.subheader("🍫 Top 10 Products by Sales")
-
-top_products = (
-    filtered.groupby("Product Name")["Sales"]
-    .sum()
-    .sort_values(ascending=False)
-    .head(10)
+# ==================================================
+# TABS
+# ==================================================
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["📊 Dashboard", "🤖 AI Insights", "📄 Data Center", "👤 About"]
 )
 
-st.bar_chart(top_products)
+# ==================================================
+# DASHBOARD TAB
+# ==================================================
+with tab1:
 
-# =========================
-# RECOMMENDATION ENGINE
-# =========================
-st.subheader("🤖 Smart Recommendation")
+    c1,c2 = st.columns(2)
 
-slow_region = (
-    filtered.groupby("Region")["Lead_Time"]
-    .mean()
-    .sort_values(ascending=False)
-    .index[0]
-)
+    with c1:
+        reg = filtered.groupby("Region")["Lead_Time"].mean().reset_index()
+        fig1 = px.bar(
+            reg,
+            x="Region",
+            y="Lead_Time",
+            title="Lead Time by Region",
+            template="plotly_dark"
+        )
+        st.plotly_chart(fig1, use_container_width=True)
 
-top_product = (
-    filtered.groupby("Product Name")["Sales"]
-    .sum()
-    .sort_values(ascending=False)
-    .index[0]
-)
+    with c2:
+        shipm = filtered.groupby("Ship Mode")["Sales"].sum().reset_index()
+        fig2 = px.pie(
+            shipm,
+            names="Ship Mode",
+            values="Sales",
+            title="Sales Share by Ship Mode",
+            template="plotly_dark"
+        )
+        st.plotly_chart(fig2, use_container_width=True)
 
-st.success(
-    f"⚡ {slow_region} region has the highest lead time. "
-    f"Recommend reallocating '{top_product}' to a nearer factory "
-    f"to improve shipping speed and efficiency."
-)
+    top = (
+        filtered.groupby("Product Name")["Sales"]
+        .sum()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index()
+    )
 
-# =========================
-# DATA TABLE
-# =========================
-st.subheader("📄 Data Preview")
-st.dataframe(filtered.head(20))
+    fig3 = px.bar(
+        top,
+        x="Product Name",
+        y="Sales",
+        title="Top 10 Products by Sales",
+        template="plotly_dark"
+    )
+    st.plotly_chart(fig3, use_container_width=True)
 
-# =========================
+# ==================================================
+# AI INSIGHTS TAB
+# ==================================================
+with tab2:
+
+    st.subheader("🤖 Smart Recommendation Engine")
+
+    slow_region = (
+        filtered.groupby("Region")["Lead_Time"]
+        .mean()
+        .sort_values(ascending=False)
+        .index[0]
+    )
+
+    top_product = (
+        filtered.groupby("Product Name")["Sales"]
+        .sum()
+        .sort_values(ascending=False)
+        .index[0]
+    )
+
+    st.success(
+        f"✔ Region needing urgent optimization: {slow_region}"
+    )
+
+    st.info(
+        f"📌 Recommended product for factory reassignment: {top_product}"
+    )
+
+    st.warning(
+        "⚠ Current delays may impact customer satisfaction and margins."
+    )
+
+# ==================================================
+# DATA TAB
+# ==================================================
+with tab3:
+
+    st.subheader("📄 Live Data Center")
+    st.dataframe(filtered, use_container_width=True)
+
+    csv = filtered.to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        "⬇ Download CSV Report",
+        csv,
+        "Nassau_Report.csv",
+        "text/csv"
+    )
+
+# ==================================================
+# ABOUT TAB
+# ==================================================
+with tab4:
+
+    st.markdown("""
+### 👨‍💻 Developed By Vedant Vinay Pal
+
+**Data Analyst Internship Project**
+
+### 🔗 Project Links
+
+- GitHub Repository  
+- Research Paper PDF  
+- Live Streamlit App  
+
+### 🚀 Technologies Used
+
+Python | Pandas | Streamlit | Plotly | Machine Learning
+""")
+
+# ==================================================
 # FOOTER
-# =========================
+# ==================================================
 st.markdown("---")
-st.caption("Built by Vedant | Data Analyst Internship Project")
+st.caption("© 2026 Nassau Candy AI Optimizer | Premium Edition")
